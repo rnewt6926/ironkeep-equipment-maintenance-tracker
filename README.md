@@ -1,6 +1,6 @@
 # Cloudflare Workers React Template
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/rnewt6926/ironkeep-equipment-maintenance-tracker)
 
 A production-ready full-stack template for Cloudflare Workers with React frontend, Durable Objects for stateful entities, and a shared type-safe API. This template includes a demo chat application with users, chat boards, and messages, demonstrating scalable entity storage and indexing.
 
@@ -79,7 +79,7 @@ DELETE /api/users/:id
 
 3. **Custom Domain**: Update `wrangler.jsonc` or use Cloudflare dashboard.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/rnewt6926/ironkeep-equipment-maintenance-tracker)
 
 **Migrations**: Durable Objects use SQLite; new classes auto-migrate.
 
