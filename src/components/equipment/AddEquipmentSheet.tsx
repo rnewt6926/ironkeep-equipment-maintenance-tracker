@@ -29,19 +29,20 @@ import {
 import { EquipmentType } from '@shared/types';
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  type: z.string(),
+  type: z.enum(['tractor', 'mower', 'chainsaw', 'handheld', 'vehicle', 'other']),
   model: z.string().min(1, "Model is required"),
   serialNumber: z.string().min(1, "Serial number is required"),
   currentHours: z.coerce.number().min(0),
   purchaseDate: z.string(),
 });
+type FormValues = z.infer<typeof formSchema>;
 interface AddEquipmentSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: z.infer<typeof formSchema>) => void;
+  onSubmit: (data: FormValues) => void;
 }
 export function AddEquipmentSheet({ open, onOpenChange, onSubmit }: AddEquipmentSheetProps) {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -28,7 +28,7 @@ const logSchema = z.object({
   hoursAtService: z.coerce.number().min(0, "Hours cannot be negative"),
   date: z.string().min(1, "Date is required"),
   description: z.string().min(3, "Description is too short"),
-  cost: z.coerce.number().min(0, "Cost must be non-negative"),
+  cost: z.coerce.number().min(0),
   performedBy: z.string().min(1, "Name is required"),
 });
 type LogFormValues = z.infer<typeof logSchema>;
@@ -40,13 +40,13 @@ interface LogServiceSheetProps {
   onOpenChange: (open: boolean) => void;
   currentHours: number;
 }
-export function LogServiceSheet({
-  equipmentId,
-  taskId,
-  taskTitle,
-  open,
+export function LogServiceSheet({ 
+  equipmentId, 
+  taskId, 
+  taskTitle, 
+  open, 
   onOpenChange,
-  currentHours
+  currentHours 
 }: LogServiceSheetProps) {
   const queryClient = useQueryClient();
   const form = useForm<LogFormValues>({
@@ -60,7 +60,7 @@ export function LogServiceSheet({
     },
   });
   const mutation = useMutation({
-    mutationFn: (data: LogFormValues) =>
+    mutationFn: (data: LogFormValues) => 
       api<Equipment>(`/api/equipment/${equipmentId}/log`, {
         method: 'POST',
         body: JSON.stringify({ ...data, taskId }),
@@ -76,9 +76,6 @@ export function LogServiceSheet({
       toast.error(err instanceof Error ? err.message : "Failed to record service log");
     }
   });
-  const handleFormSubmit: SubmitHandler<LogFormValues> = (data) => {
-    mutation.mutate(data);
-  };
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md border-l border-border/40">
@@ -89,7 +86,7 @@ export function LogServiceSheet({
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -160,8 +157,8 @@ export function LogServiceSheet({
               />
             </div>
             <div className="pt-6">
-              <Button
-                type="submit"
+              <Button 
+                type="submit" 
                 className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-bold"
                 disabled={mutation.isPending}
               >
