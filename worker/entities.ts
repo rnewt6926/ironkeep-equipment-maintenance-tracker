@@ -1,41 +1,55 @@
-/**
- * Minimal real-world demo: One Durable Object instance per entity (User, ChatBoard), with Indexes for listing.
- */
 import { IndexedEntity } from "./core-utils";
-import type { User, Chat, ChatMessage } from "@shared/types";
-import { MOCK_CHAT_MESSAGES, MOCK_CHATS, MOCK_USERS } from "@shared/mock-data";
-
-// USER ENTITY: one DO instance per user
+import type { Equipment, User, Chat, ChatMessage } from "@shared/types";
+import { MOCK_EQUIPMENT, MOCK_USERS } from "@shared/mock-data";
+export class EquipmentEntity extends IndexedEntity<Equipment> {
+  static readonly entityName = "equipment";
+  static readonly indexName = "equipment_index";
+  static readonly initialState: Equipment = {
+    id: "",
+    name: "",
+    type: "other",
+    model: "",
+    serialNumber: "",
+    purchaseDate: "",
+    currentHours: 0,
+    status: "operational",
+    tasks: [],
+    logs: []
+  };
+  static seedData = MOCK_EQUIPMENT;
+  async updateHours(hours: number): Promise<Equipment> {
+    return this.mutate(s => {
+      const nextHours = Math.max(s.currentHours, hours);
+      // Logic for calculating urgency would happen here in a real app
+      return { ...s, currentHours: nextHours };
+    });
+  }
+  async addLog(log: Omit<typeof EquipmentEntity.initialState.logs[0], 'id'>): Promise<Equipment> {
+    return this.mutate(s => ({
+      ...s,
+      logs: [...s.logs, { ...log, id: crypto.randomUUID() }]
+    }));
+  }
+}
 export class UserEntity extends IndexedEntity<User> {
   static readonly entityName = "user";
   static readonly indexName = "users";
   static readonly initialState: User = { id: "", name: "" };
   static seedData = MOCK_USERS;
 }
-
-// CHAT BOARD ENTITY: one DO instance per chat board, stores its own messages
 export type ChatBoardState = Chat & { messages: ChatMessage[] };
-
-const SEED_CHAT_BOARDS: ChatBoardState[] = MOCK_CHATS.map(c => ({
-  ...c,
-  messages: MOCK_CHAT_MESSAGES.filter(m => m.chatId === c.id),
-}));
-
 export class ChatBoardEntity extends IndexedEntity<ChatBoardState> {
   static readonly entityName = "chat";
   static readonly indexName = "chats";
   static readonly initialState: ChatBoardState = { id: "", title: "", messages: [] };
-  static seedData = SEED_CHAT_BOARDS;
-
+  static seedData = [];
   async listMessages(): Promise<ChatMessage[]> {
     const { messages } = await this.getState();
     return messages;
   }
-
   async sendMessage(userId: string, text: string): Promise<ChatMessage> {
     const msg: ChatMessage = { id: crypto.randomUUID(), chatId: this.id, userId, text, ts: Date.now() };
     await this.mutate(s => ({ ...s, messages: [...s.messages, msg] }));
     return msg;
   }
 }
-

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -29,20 +29,19 @@ import {
 import { EquipmentType } from '@shared/types';
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  type: z.enum(['tractor', 'mower', 'chainsaw', 'handheld', 'vehicle', 'other']),
+  type: z.string(),
   model: z.string().min(1, "Model is required"),
   serialNumber: z.string().min(1, "Serial number is required"),
-  currentHours: z.coerce.number().min(0, "Hours must be non-negative"),
+  currentHours: z.coerce.number().min(0),
   purchaseDate: z.string(),
 });
-type FormValues = z.infer<typeof formSchema>;
 interface AddEquipmentSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: z.infer<typeof formSchema>) => void;
 }
 export function AddEquipmentSheet({ open, onOpenChange, onSubmit }: AddEquipmentSheetProps) {
-  const form = useForm<FormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -61,10 +60,6 @@ export function AddEquipmentSheet({ open, onOpenChange, onSubmit }: AddEquipment
     { label: "Vehicle", value: "vehicle" },
     { label: "Other", value: "other" },
   ];
-  const handleFormSubmit: SubmitHandler<FormValues> = (data) => {
-    onSubmit(data);
-    form.reset();
-  };
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md border-l border-border/40">
@@ -75,7 +70,7 @@ export function AddEquipmentSheet({ open, onOpenChange, onSubmit }: AddEquipment
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
