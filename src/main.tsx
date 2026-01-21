@@ -13,6 +13,8 @@ import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
 import { MachineDetailPage } from '@/pages/MachineDetailPage';
+import { SchedulePage } from '@/pages/SchedulePage';
+import { HistoryPage } from '@/pages/HistoryPage';
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -23,6 +25,16 @@ const router = createBrowserRouter([
   {
     path: "/equipment/:id",
     element: <MachineDetailPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/schedule",
+    element: <SchedulePage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/history",
+    element: <HistoryPage />,
     errorElement: <RouteErrorBoundary />,
   },
 ]);
