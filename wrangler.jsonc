@@ -4,7 +4,7 @@
  */
  {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "ironkeep-y266ylgsacy03mkr_gaxo",
+	"name": "ironkeep-equipment-maintenance-tracker",
 	"main": "worker/index.ts",
 	"compatibility_date": "2025-04-24",
 	"assets": {
